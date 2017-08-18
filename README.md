@@ -1,9 +1,11 @@
-# deadspot
-Survival 2D 
+# Deadspot
 
-  # Versiones:
+  * Descripción:
+      Survival 2D 
+
+  * Versiones:
   
-  # Trello:
+  * Trello:
       https://trello.com/b/JXDQqehI/proyecto-panda
       
     
