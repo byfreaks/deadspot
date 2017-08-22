@@ -368,6 +368,50 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 797590015}
+--- !u!1 &1032284200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1032284201}
+  - component: {fileID: 1032284202}
+  m_Layer: 0
+  m_Name: InputController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1032284201
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1032284200}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 356.28888, y: 488.1208, z: -127}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1032284202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1032284200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec751be8daab0de41bf428b5845e5813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyHoldD: 0
+  keyHoldA: 0
+  keyPressSpace: 0
+  mouseRButton: 0
 --- !u!1 &1364034174
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,6 +713,11 @@ Prefab:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114955894950052058, guid: a1836cef31a3a4f4390bd275d64ee7aa,
+        type: 2}
+      propertyPath: inputController
+      value: 
+      objectReference: {fileID: 1032284200}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a1836cef31a3a4f4390bd275d64ee7aa, type: 2}
   m_IsPrefabParent: 0
