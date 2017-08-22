@@ -19,10 +19,6 @@ public class MainScriptPlayer : MonoBehaviour {
 	public GameObject playerLegs;
 
 	//Design Public
-	[Header("Game Scripts")]
-	public GameObject inputController;
-	private InputController inputer;
-
 	[Header("Physics settings")]
 	public float moveSpeed = 3;
 	public float moveAim = 100;
@@ -41,15 +37,13 @@ public class MainScriptPlayer : MonoBehaviour {
 		//Get components
 		rb = GetComponent<Rigidbody2D>();
 		boxColl = GetComponent<BoxCollider2D>();
-		inputer = inputController.GetComponent<InputController>();
-		
 
 		rb.freezeRotation = true;
 	}
 	
 	void Update () {
 
-		if (inputer.mouseRButton){
+		if (Input.GetMouseButton(1)){
 			toDisplay = "State: Aiming";
 			isAiming = true;
 		} else {
@@ -61,30 +55,31 @@ public class MainScriptPlayer : MonoBehaviour {
 		if (isAiming) spd = moveSpeed - moveAim;
 		else spd = moveSpeed;
 
-		if (inputer.keyHoldD){
+		if (Input.GetKey(KeyCode.D)){
 			rb.velocity = new Vector2( spd, rb.velocity.y);
 			facingRight = true;
 		}
-		if (inputer.keyHoldA){
+		if (Input.GetKey(KeyCode.A)){
 			rb.velocity = new Vector2(-spd, rb.velocity.y);
 			facingRight = false;
 		}
-		if (inputer.keyPressSpace){
+		if (Input.GetKeyDown(KeyCode.Space)){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce );
 		}
 
-
+		toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
 		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 		
 		//Animation
+		
+		
+
 		if (isAiming){
 			playerTorso.GetComponent<SpriteRenderer>().sprite = sprAimingKira;
 
 			//TODO declare proper vars
 			Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        	playerTorso.transform.rotation = Quaternion.LookRotation(Vector3.forward, (mousePos - transform.position) );
-
-			Debug.Log(mousePos - transform.position);
+        	playerTorso.transform.rotation = Quaternion.LookRotation(Vector3.forward, mousePos - transform.position  );
 
 			if (mousePos.x > transform.position.x) facingRight = true;
 			else facingRight = false;

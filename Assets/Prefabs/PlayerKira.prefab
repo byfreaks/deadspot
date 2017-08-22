@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4061881157566938}
   - component: {fileID: 212857669221810252}
+  - component: {fileID: 95764476934206488}
   m_Layer: 0
   m_Name: Legs
   m_TagString: Untagged
@@ -94,8 +95,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1747198752180274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.24, y: -0.97, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 494, y: 293, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children:
   - {fileID: 4087307893281618}
   - {fileID: 4061881157566938}
@@ -147,6 +148,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 23.984987, y: 74.28803}
   m_EdgeRadius: 0
+--- !u!95 &95764476934206488
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1205715336552434}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 49764e16345916c40bcf715f05f30883, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114955894950052058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -158,9 +176,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c951a354778b44d9d1b98c0ea137b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprAimingKira: {fileID: 21300000, guid: 9b6485fa7b3ea534cb92521e12e46743, type: 3}
+  sprNormalKira: {fileID: 21300000, guid: 15753eabc0d30ba41b8d62e5292b25e6, type: 3}
   playerTorso: {fileID: 1955931658667120}
   playerLegs: {fileID: 1205715336552434}
+  inputController: {fileID: 0}
   moveSpeed: 300
+  moveAim: 100
   jumpForce: 250
 --- !u!212 &212857669221810252
 SpriteRenderer:
@@ -194,12 +216,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: adc88b1638661d84cbe0018ed57ab1ef, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f792b82c787074041afabe12b96f9955, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.7, y: 0.9}
+  m_Size: {x: 35, y: 45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
