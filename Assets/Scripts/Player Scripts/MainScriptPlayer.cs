@@ -11,7 +11,7 @@ public class MainScriptPlayer : MonoBehaviour {
 
 	//Components
 	private Rigidbody2D rb;
-	private BoxCollider2D boxColl;
+	//private BoxCollider2D boxColl;
 
 	//Body parts
 	[Header("Body parts")]
@@ -28,19 +28,27 @@ public class MainScriptPlayer : MonoBehaviour {
 	public float moveAim = 100;
 	public float jumpForce = 3;
 
+	[Header("Logic")]
+	public LayerMask shootingLayer;
+
 	//Other
 	private string toDisplay;
+	public float wOffsetX = 0f, wOffsetY = 0f;
 
 	//Private
 	private bool facingRight = true;
 	private bool isAiming = false;
 	private float spd = 0;
 
+	private float shootingRayMax = 50f;
+
+
+	private Vector3 mousePos;
 
 	void Start () {
 		//Get components
 		rb = GetComponent<Rigidbody2D>();
-		boxColl = GetComponent<BoxCollider2D>();
+		//boxColl = GetComponent<BoxCollider2D>();
 		inputer = inputController.GetComponent<InputController>();
 		
 
@@ -64,8 +72,7 @@ public class MainScriptPlayer : MonoBehaviour {
 		if (inputer.keyHoldD){
 			rb.velocity = new Vector2( spd, rb.velocity.y);
 			facingRight = true;
-		}
-		if (inputer.keyHoldA){
+		} else if (inputer.keyHoldA){
 			rb.velocity = new Vector2(-spd, rb.velocity.y);
 			facingRight = false;
 		}
@@ -74,6 +81,7 @@ public class MainScriptPlayer : MonoBehaviour {
 		}
 
 
+		toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
 		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 		
 		//Animation
@@ -81,13 +89,17 @@ public class MainScriptPlayer : MonoBehaviour {
 			playerTorso.GetComponent<SpriteRenderer>().sprite = sprAimingKira;
 
 			//TODO declare proper vars
-			Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         	playerTorso.transform.rotation = Quaternion.LookRotation(Vector3.forward, (mousePos - transform.position) );
-
-			Debug.Log(mousePos - transform.position);
+			playerTorso.transform.position = new Vector3(playerTorso.transform.position.x, playerTorso.transform.position.y, playerLegs.transform.position.z-0.1f);
 
 			if (mousePos.x > transform.position.x) facingRight = true;
 			else facingRight = false;
+
+			if (inputer.mouseLButtonPress){
+				Shoot();
+
+			}
 
 		} else {
 			playerTorso.GetComponent<SpriteRenderer>().sprite = sprNormalKira;
@@ -99,4 +111,35 @@ public class MainScriptPlayer : MonoBehaviour {
 		playerLegs.GetComponent<SpriteRenderer>().flipX = !facingRight;
 		
 	}
+
+	void Shoot(){
+		RaycastHit2D hit;
+		Vector3 weaponOffset;
+		
+		weaponOffset = new Vector3(wOffsetX, wOffsetY, 0);
+
+		hit = Physics2D.Raycast( (transform.position+weaponOffset), (new Vector3(0,Random.Range(-20,20),0) + mousePos) - transform.position, 1000, shootingLayer);
+
+		if (hit.collider != null){
+			Debug.DrawRay((transform.position+weaponOffset), hit.point - (Vector2)transform.position );
+			hit.collider.GetComponent<Rigidbody2D>().velocity = new Vector2(30,0);
+			DrawLine(transform.position+weaponOffset, hit.point, Color.white, 0.1f);
+		}
+		
+		
+	}
+
+	void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.1f)
+         {
+             GameObject myLine = new GameObject();
+             myLine.transform.position = start;
+             myLine.AddComponent<LineRenderer>();
+             LineRenderer lr = myLine.GetComponent<LineRenderer>();
+             lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+             lr.SetColors(color, color);
+             lr.SetWidth(0.1f, 1.2f);
+             lr.SetPosition(0, start);
+             lr.SetPosition(1, end);
+             GameObject.Destroy(myLine, duration);
+         }
 }

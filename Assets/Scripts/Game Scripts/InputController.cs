@@ -17,7 +17,8 @@ public class InputController : MonoBehaviour {
 	//press
 	public bool keyPressSpace;
 	//mouse
-	public bool mouseRButton;
+	public bool mouseRButton, mouseLButton;
+	public bool mouseRButtonPress, mouseLButtonPress;
 	
 	void Update () {
 
@@ -26,8 +27,14 @@ public class InputController : MonoBehaviour {
 
 				keyHoldD = Input.GetKey(KeyCode.D) ? true : false;
 				keyHoldA = Input.GetKey(KeyCode.A) ? true : false;
+
 				keyPressSpace = Input.GetKeyDown(KeyCode.Space) ? true : false;
+				
 				mouseRButton = Input.GetMouseButton(1) ? true : false;
+				mouseLButton = Input.GetMouseButton(0) ? true : false;
+
+				mouseRButtonPress = Input.GetMouseButtonDown(1) ? true : false;
+				mouseLButtonPress = Input.GetMouseButtonDown(0) ? true : false;
 
 			break;
 
