@@ -11,7 +11,7 @@ public class MainScriptPlayer : MonoBehaviour {
 
 	//Components
 	private Rigidbody2D rb;
-	//private BoxCollider2D boxColl;
+	private BoxCollider2D boxColl;
 
 	//Body parts
 	[Header("Body parts")]
@@ -48,15 +48,16 @@ public class MainScriptPlayer : MonoBehaviour {
 	void Start () {
 		//Get components
 		rb = GetComponent<Rigidbody2D>();
-		//boxColl = GetComponent<BoxCollider2D>();
+		boxColl = GetComponent<BoxCollider2D>();
 		inputer = inputController.GetComponent<InputController>();
 		
-
+		//
 		rb.freezeRotation = true;
 	}
 	
 	void Update () {
 
+		//Aim
 		if (inputer.mouseRButton){
 			toDisplay = "State: Aiming";
 			isAiming = true;
@@ -80,7 +81,7 @@ public class MainScriptPlayer : MonoBehaviour {
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce );
 		}
 
-
+		//Debug FPS
 		toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
 		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 		
