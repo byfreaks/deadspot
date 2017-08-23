@@ -59,10 +59,8 @@ public class MainScriptPlayer : MonoBehaviour {
 
 		//Aim
 		if (inputer.mouseRButton){
-			toDisplay = "State: Aiming";
 			isAiming = true;
-		} else {
-			toDisplay = "State: Normal";
+		} else {			
 			isAiming = false;
 		}
 
@@ -70,14 +68,14 @@ public class MainScriptPlayer : MonoBehaviour {
 		if (isAiming) spd = moveSpeed - moveAim;
 		else spd = moveSpeed;
 
-		if (Input.GetKey(KeyCode.D)){
+		if (inputer.keyHoldD){
 			rb.velocity = new Vector2( spd, rb.velocity.y);
 			facingRight = true;
 		} else if (inputer.keyHoldA){
 			rb.velocity = new Vector2(-spd, rb.velocity.y);
 			facingRight = false;
 		}
-		if (Input.GetKeyDown(KeyCode.Space)){
+		if (inputer.keyPressSpace){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce );
 		}
 
@@ -86,9 +84,6 @@ public class MainScriptPlayer : MonoBehaviour {
 		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 		
 		//Animation
-		
-		
-
 		if (isAiming){
 			playerTorso.GetComponent<SpriteRenderer>().sprite = sprAimingKira;
 
