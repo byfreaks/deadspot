@@ -12,6 +12,7 @@ public class MainScriptPlayer : MonoBehaviour {
 	//Components
 	private Rigidbody2D rb;
 	private BoxCollider2D boxColl;
+	private HealthComponent hp;
 
 	//Body parts
 	[Header("Body parts")]
@@ -34,22 +35,22 @@ public class MainScriptPlayer : MonoBehaviour {
 	//Other
 	private string toDisplay;
 	public float wOffsetX = 0f, wOffsetY = 0f;
+	private Vector3 mousePos;
 
 	//Private
 	private bool facingRight = true;
 	private bool isAiming = false;
+	private int jumpTimes;
+
 	private float spd = 0;
-
 	private float shootingRayMax = 50f;
-
-
-	private Vector3 mousePos;
 
 	void Start () {
 		//Get components
 		rb = GetComponent<Rigidbody2D>();
 		boxColl = GetComponent<BoxCollider2D>();
 		inputer = inputController.GetComponent<InputController>();
+		hp = GetComponent<HealthComponent>();
 		
 		//
 		rb.freezeRotation = true;
@@ -68,6 +69,7 @@ public class MainScriptPlayer : MonoBehaviour {
 		if (isAiming) spd = moveSpeed - moveAim;
 		else spd = moveSpeed;
 
+		
 		if (inputer.keyHoldD){
 			rb.velocity = new Vector2( spd, rb.velocity.y);
 			facingRight = true;
@@ -77,11 +79,10 @@ public class MainScriptPlayer : MonoBehaviour {
 		}
 		if (inputer.keyPressSpace){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce );
+			jumpTimes++;
 		}
 
-		//Debug FPS
-		toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
-		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
+		
 		
 		//Animation
 		if (isAiming){
@@ -95,9 +96,8 @@ public class MainScriptPlayer : MonoBehaviour {
 			if (mousePos.x > transform.position.x) facingRight = true;
 			else facingRight = false;
 
-			if (inputer.mouseLButtonPress){
+			if (inputer.mouseLButton){
 				Shoot();
-
 			}
 
 		} else {
@@ -108,6 +108,13 @@ public class MainScriptPlayer : MonoBehaviour {
 
 		playerTorso.GetComponent<SpriteRenderer>().flipX = !facingRight;
 		playerLegs.GetComponent<SpriteRenderer>().flipX = !facingRight;
+
+		//Debug FPS
+		toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
+		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
+
+		//Testing
+		if (inputer.keyPressQ) hp.Damage(10f);
 		
 	}
 
@@ -129,16 +136,18 @@ public class MainScriptPlayer : MonoBehaviour {
 	}
 
 	void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.1f)
-         {
-             GameObject myLine = new GameObject();
-             myLine.transform.position = start;
-             myLine.AddComponent<LineRenderer>();
-             LineRenderer lr = myLine.GetComponent<LineRenderer>();
-             lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-             lr.SetColors(color, color);
-             lr.SetWidth(0.1f, 1.2f);
-             lr.SetPosition(0, start);
-             lr.SetPosition(1, end);
-             GameObject.Destroy(myLine, duration);
-         }
+	{
+		GameObject myLine = new GameObject();
+		myLine.transform.position = start;
+		myLine.AddComponent<LineRenderer>();
+		LineRenderer lr = myLine.GetComponent<LineRenderer>();
+		lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		lr.SetColors(color, color);
+		lr.SetWidth(0.1f, 1.2f);
+		lr.SetPosition(0, start);
+		lr.SetPosition(1, end);
+		GameObject.Destroy(myLine, duration);
+	}
+
+	
 }

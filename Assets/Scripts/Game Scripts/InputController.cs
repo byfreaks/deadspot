@@ -15,7 +15,7 @@ public class InputController : MonoBehaviour {
 	//hold
 	public bool keyHoldD, keyHoldA;
 	//press
-	public bool keyPressSpace;
+	public bool keyPressSpace, keyPressQ;
 	//mouse
 	public bool mouseRButton, mouseLButton;
 	public bool mouseRButtonPress, mouseLButtonPress;
@@ -29,6 +29,7 @@ public class InputController : MonoBehaviour {
 				keyHoldA = Input.GetKey(KeyCode.A) ? true : false;
 
 				keyPressSpace = Input.GetKeyDown(KeyCode.Space) ? true : false;
+				keyPressQ = Input.GetKeyDown(KeyCode.Q) ? true : false;
 				
 				mouseRButton = Input.GetMouseButton(1) ? true : false;
 				mouseLButton = Input.GetMouseButton(0) ? true : false;
