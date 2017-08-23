@@ -19,10 +19,6 @@ public class MainScriptPlayer : MonoBehaviour {
 	public GameObject playerLegs;
 
 	//Design Public
-	[Header("Game Scripts")]
-	public GameObject inputController;
-	private InputController inputer;
-
 	[Header("Physics settings")]
 	public float moveSpeed = 3;
 	public float moveAim = 100;
@@ -70,14 +66,14 @@ public class MainScriptPlayer : MonoBehaviour {
 		if (isAiming) spd = moveSpeed - moveAim;
 		else spd = moveSpeed;
 
-		if (inputer.keyHoldD){
+		if (Input.GetKey(KeyCode.D)){
 			rb.velocity = new Vector2( spd, rb.velocity.y);
 			facingRight = true;
 		} else if (inputer.keyHoldA){
 			rb.velocity = new Vector2(-spd, rb.velocity.y);
 			facingRight = false;
 		}
-		if (inputer.keyPressSpace){
+		if (Input.GetKeyDown(KeyCode.Space)){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce );
 		}
 
@@ -86,6 +82,9 @@ public class MainScriptPlayer : MonoBehaviour {
 		GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 		
 		//Animation
+		
+		
+
 		if (isAiming){
 			playerTorso.GetComponent<SpriteRenderer>().sprite = sprAimingKira;
 
