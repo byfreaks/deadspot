@@ -67,4 +67,8 @@ public class MainScriptAI : MonoBehaviour {
 			this.isAttacking = false;
 		}
 	}
+
+	void setObjective(GameObject obj){
+		this.objective = obj;
+	}
 }
