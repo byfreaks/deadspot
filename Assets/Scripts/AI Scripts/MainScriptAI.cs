@@ -34,35 +34,41 @@ public class MainScriptAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//Detect objective
-		if(objective.transform.position.x < this.transform.position.x){
-			this.facingRight = false;
-			sprRr.flipX = true;
-		}else{
-			this.facingRight = true;
-			sprRr.flipX = false;
-		}
+		if(objective!=null){
+			//Detect objective
+			if(objective.transform.position.x < this.transform.position.x){
+				this.facingRight = false;
+				sprRr.flipX = true;
+			}else{
+				this.facingRight = true;
+				sprRr.flipX = false;
+			}
 
-		//Collision
-		if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, 40).collider!=null){
-			this.isAttacking = true;
-			this.isMoving = false;
-			Debug.Log("Is attacking right: "+ this.isAttacking);
-		}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, 40).collider!=null){
-			this.isAttacking = true;
-			this.isMoving = false;
-			Debug.Log("Is attacking left: "+ this.isAttacking);
-		}
-		
-		//Attack
+			//Collision
+			if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, 40).collider==objective.GetComponent<BoxCollider2D>()){
+				this.isAttacking = true;
+				this.isMoving = false;
+				Debug.Log("Is attacking right: "+ this.isAttacking);
+			}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, 40).collider==objective.GetComponent<BoxCollider2D>()){
+				this.isAttacking = true;
+				this.isMoving = false;
+				Debug.Log("Is attacking left: "+ this.isAttacking);
+			}
+			
+			//Attack
 
-		//Move
-		if(isMoving){
-			rb.velocity = !this.facingRight ? new Vector2(-movespeed, rb.velocity.y) : rb.velocity = new Vector2(movespeed, rb.velocity.y);
+			//Move
+			if(isMoving){
+				rb.velocity = !this.facingRight ? new Vector2(-movespeed, rb.velocity.y) : rb.velocity = new Vector2(movespeed, rb.velocity.y);
+			}
+			
+			//Reset
+			this.isMoving = true;
+			this.isAttacking = false;
 		}
-		
-		//Reset
-		this.isMoving = true;
-		this.isAttacking = false;
+	}
+
+	void setObjective(GameObject obj){
+		this.objective = obj;
 	}
 }
