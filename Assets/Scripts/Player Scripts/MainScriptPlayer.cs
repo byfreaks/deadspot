@@ -18,6 +18,10 @@ public class MainScriptPlayer : MonoBehaviour {
 	public GameObject playerTorso;
 	public GameObject playerLegs;
 
+	[Header("Game Scripts")]
+	public GameObject inputController;
+	public InputController inputer;
+
 	//Design Public
 	[Header("Physics settings")]
 	public float moveSpeed = 3;
