@@ -4,23 +4,33 @@ using UnityEngine;
 
 public class MainScriptAI : MonoBehaviour {
 
+	//Attack Collider
+	public GameObject refAttackCollider;
+	private GameObject attackCollider;
+	private int contAttack;
+	
 	//Objective to attack
 	public GameObject objective;
+	public LayerMask objectiveLayer;
 
 	//Attributes
 	[Header("Physics settings")]
 	public float movespeed = 200;
+	public float attackDistance;
+	private int attackTime = 500; 
 	
 	//States
-	private bool isMoving = true;
+	private bool followingObj = false;
 	private bool isAttacking = false;
 	private bool facingRight = true;
+	private bool inAttack = false;
 
 	//Components
 	private Rigidbody2D rb;
 	private BoxCollider2D bColl;
 	private Animator anm;
 	private SpriteRenderer sprRr;
+	private HealthComponent hthCom;
 
 	// Use this for initialization
 	void Start () {
@@ -28,47 +38,101 @@ public class MainScriptAI : MonoBehaviour {
 		bColl = GetComponent<BoxCollider2D>();
 		anm = GetComponent<Animator>();
 		sprRr = GetComponent<SpriteRenderer>();
+		hthCom = GetComponent<HealthComponent>();
 
 		rb.freezeRotation = true;
+
+		attackDistance = Random.Range(35.0f,40.0f);
+		contAttack = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(objective!=null){
-			//Detect objective
-			if(objective.transform.position.x < this.transform.position.x){
-				this.facingRight = false;
-				sprRr.flipX = true;
+
+		//STATE: dead
+		if(hthCom.HealthCurrent == 0){
+			
+			//FALTA Animacion de Morir
+			Destroy(this.gameObject);
+
+		//STATE: in Attack
+		}else if(inAttack){
+			if(contAttack>=attackTime){
+				Debug.Log("Termino el ataque");
+				contAttack=0;
+				Destroy(attackCollider);
+				inAttack = false;
+			
 			}else{
-				this.facingRight = true;
-				sprRr.flipX = false;
+				contAttack++;
+				Debug.Log(contAttack);
 			}
+		}else{
 
-			//Collision
-			if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, 40).collider==objective.GetComponent<BoxCollider2D>()){
-				this.isAttacking = true;
-				this.isMoving = false;
-				Debug.Log("Is attacking right: "+ this.isAttacking);
-			}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, 40).collider==objective.GetComponent<BoxCollider2D>()){
-				this.isAttacking = true;
-				this.isMoving = false;
-				Debug.Log("Is attacking left: "+ this.isAttacking);
-			}
-			
-			//Attack
+			//Set State
+			followingObj = (objective!=null);
 
-			//Move
-			if(isMoving){
-				rb.velocity = !this.facingRight ? new Vector2(-movespeed, rb.velocity.y) : rb.velocity = new Vector2(movespeed, rb.velocity.y);
+			//STATE: idle
+			if(!followingObj){
+				//Do something
+
+			//STATE: following objective
+			}else{
+
+				//Detect position objective
+				this.facingRight = detectPositionObj();
+				sprRr.flipX = !this.facingRight;
+
+				//Move to objective
+				if(!this.isAttacking) moveTo(this.facingRight);
+
+				//Detect collision with the objective
+				this.isAttacking = detectCollision(this.objective);
+
+				//Attack
+				if(this.isAttacking){
+					inAttack = true;
+					
+					attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
+					attackCollider.transform.parent = this.transform;
+
+					//Empieza Animacion de atacar
+					Debug.Log("Empieza el ataque");
+				}
+				
 			}
-			
-			//Reset
-			this.isMoving = true;
-			this.isAttacking = false;
+		}
+
+
+		
+	}
+
+	bool detectPositionObj(){
+		if(objective.transform.position.x < this.transform.position.x){
+			//Left
+			return false;
+		}else{
+			//Right
+			return true;
 		}
 	}
 
-	void setObjective(GameObject obj){
-		this.objective = obj;
+	bool detectCollision(GameObject a){
+		if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, attackDistance, objectiveLayer).collider==a.GetComponent<BoxCollider2D>()){
+			return true; //Collision right
+		}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, objectiveLayer).collider==a.GetComponent<BoxCollider2D>()){
+			return true; //Collision left
+		}
+		return false; //NO collision
 	}
+
+	void moveTo(bool a){
+		//True == Right/False == Left
+		rb.velocity = !a ? new Vector2(-movespeed, rb.velocity.y) : rb.velocity = new Vector2(movespeed, rb.velocity.y);
+		
+	}
+
+
+	
+
 }
