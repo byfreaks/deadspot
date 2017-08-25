@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4965082573846118}
   - component: {fileID: 114955894950052058}
+  - component: {fileID: 114228270929136578}
   - component: {fileID: 50652801338630296}
   - component: {fileID: 61040382329378668}
   m_Layer: 0
@@ -122,7 +123,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &61040382329378668
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -165,6 +166,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114228270929136578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1747198752180274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62033f02b51f951418961bed353e80b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthMax: 100
+  HealthCurrent: 0
+  ArmorMax: 100
+  ArmorCurrent: 0
 --- !u!114 &114955894950052058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -180,10 +196,17 @@ MonoBehaviour:
   sprNormalKira: {fileID: 21300000, guid: 15753eabc0d30ba41b8d62e5292b25e6, type: 3}
   playerTorso: {fileID: 1955931658667120}
   playerLegs: {fileID: 1205715336552434}
+  gunOffset: {fileID: 0}
   inputController: {fileID: 0}
+  inputer: {fileID: 0}
   moveSpeed: 300
-  moveAim: 100
+  moveAim: 200
   jumpForce: 250
+  shootingLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  wOffsetX: 0
+  wOffsetY: 0
 --- !u!212 &212857669221810252
 SpriteRenderer:
   m_ObjectHideFlags: 1
