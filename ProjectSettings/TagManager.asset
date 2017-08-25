@@ -14,6 +14,7 @@ TagManager:
   - 
   - 
   - shootingLayer
+  - enemyLayer
   - 
   - 
   - 
@@ -25,7 +26,6 @@ TagManager:
   - 
   - 
   - 
-  - DebugInSceneViewOnly
   - 
   - 
   - 
