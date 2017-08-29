@@ -16,9 +16,9 @@ public class AttackObjective : MonoBehaviour {
 		
 	}
 
-	void OnTriggerEnter(Collider other){
+	void OnTriggerEnter2D(Collider2D other){
 		Debug.Log("SSSSS");
-		if(other == objToAttack.GetComponent<Collider>()){
+		if(other == objToAttack.GetComponent<Collider2D>()){
 			collision = true;
 			Debug.Log("Colisionando");
 		}else{

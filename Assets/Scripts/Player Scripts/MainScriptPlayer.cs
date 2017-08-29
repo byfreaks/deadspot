@@ -264,13 +264,16 @@ public class MainScriptPlayer : MonoBehaviour {
 		if(inmune <= 0){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce*2);
 			inmune = 120;
-		} else {
+		
 			if (hp.HealthCurrent <= 0){
 				GetKiled();
 			} else {
 				hp.HealthCurrent -= val;
 			}
 		}
+
+		
+		
 		
 	}
 

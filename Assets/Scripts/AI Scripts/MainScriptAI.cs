@@ -15,7 +15,7 @@ public class MainScriptAI : MonoBehaviour {
 
 	//Attributes
 	[Header("Physics settings")]
-	public float movespeed = 200;
+	public float movespeed;
 	public float attackDistance;
 	private int attackTime = 100; 
 	
@@ -42,7 +42,8 @@ public class MainScriptAI : MonoBehaviour {
 
 		rb.freezeRotation = true;
 
-		attackDistance = Random.Range(35.0f,40.0f);
+		movespeed = Random.Range(80f,130f);
+		attackDistance = Random.Range(17f,21f);
 		contAttack = 0;
 	}
 	
@@ -57,7 +58,7 @@ public class MainScriptAI : MonoBehaviour {
 
 		//STATE: in Attack
 		}else if(inAttack){
-			if(contAttack == 60){
+			if(contAttack == 1){
 				
 				if(attackCollider.GetComponent<AttackObjective>().collision){
 					Debug.Log("Ataco Aqui");
