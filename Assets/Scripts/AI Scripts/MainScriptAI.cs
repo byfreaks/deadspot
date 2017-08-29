@@ -17,7 +17,7 @@ public class MainScriptAI : MonoBehaviour {
 	[Header("Physics settings")]
 	public float movespeed = 200;
 	public float attackDistance;
-	private int attackTime = 500; 
+	private int attackTime = 100; 
 	
 	//States
 	private bool followingObj = false;
@@ -57,7 +57,16 @@ public class MainScriptAI : MonoBehaviour {
 
 		//STATE: in Attack
 		}else if(inAttack){
-			if(contAttack>=attackTime){
+			if(contAttack == 60){
+				
+				if(attackCollider.GetComponent<AttackObjective>().collision){
+					Debug.Log("Ataco Aqui");
+					objective.GetComponent<MainScriptPlayer>().Damaged(20);
+				}
+				contAttack++;
+
+			}else if(contAttack>=attackTime){
+				
 				Debug.Log("Termino el ataque");
 				contAttack=0;
 				Destroy(attackCollider);
@@ -98,6 +107,7 @@ public class MainScriptAI : MonoBehaviour {
 
 					//Empieza Animacion de atacar
 					Debug.Log("Empieza el ataque");
+					
 				}
 				
 			}

@@ -272,11 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1368537813}
---- !u!1 &562617604 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1715014489718136, guid: 43b8313cd5da4414187626ae8d68d7f5,
-    type: 2}
-  m_PrefabInternal: {fileID: 852865904}
+  zoomEnabled: 1
+  zoomSize: 2.5
 --- !u!1 &711878253
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +435,7 @@ Prefab:
         type: 2}
       propertyPath: refAttackCollider
       value: 
-      objectReference: {fileID: 562617604}
+      objectReference: {fileID: 0}
     - target: {fileID: 114362019870817582, guid: 29e5b0179245e984986d3af2dcbfe217,
         type: 2}
       propertyPath: objective
@@ -521,48 +518,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 797590015}
---- !u!1001 &852865904
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 481.20236
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 119.89557
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4862102681250474, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 43b8313cd5da4414187626ae8d68d7f5, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1032284200
 GameObject:
   m_ObjectHideFlags: 0
@@ -941,7 +896,7 @@ Prefab:
         type: 2}
       propertyPath: refAttackCollider
       value: 
-      objectReference: {fileID: 562617604}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 29e5b0179245e984986d3af2dcbfe217, type: 2}
   m_IsPrefabParent: 0
