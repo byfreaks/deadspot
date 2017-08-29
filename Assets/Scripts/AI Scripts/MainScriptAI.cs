@@ -8,6 +8,7 @@ public class MainScriptAI : MonoBehaviour {
 	public GameObject refAttackCollider;
 	private GameObject attackCollider;
 	private int contAttack;
+	float attackPosition = 15f;
 	
 	//Objective to attack
 	public GameObject objective;
@@ -77,6 +78,13 @@ public class MainScriptAI : MonoBehaviour {
 				contAttack++;
 				Debug.Log(contAttack);
 			}
+
+			if (facingRight && attackCollider != null){
+				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(attackPosition,0);
+			} else {
+				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(-attackPosition,0);
+			}
+
 		}else{
 
 			//Set State
@@ -113,8 +121,6 @@ public class MainScriptAI : MonoBehaviour {
 				
 			}
 		}
-
-
 		
 	}
 

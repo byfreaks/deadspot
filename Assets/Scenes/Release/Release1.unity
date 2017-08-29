@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2112721458}
-  zoomEnabled: 1
+  zoomEnabled: 0
   zoomSize: 2.5
 --- !u!1 &2013977
 GameObject:
@@ -1283,7 +1283,7 @@ Prefab:
     - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
         type: 2}
       propertyPath: isInfinite
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
         type: 2}
@@ -1303,7 +1303,12 @@ Prefab:
     - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
         type: 2}
       propertyPath: active
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
+        type: 2}
+      propertyPath: quantity
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 59900d05381c8f34e81173230ce86470, type: 2}
@@ -2780,7 +2785,7 @@ Prefab:
     - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
         type: 2}
       propertyPath: isInfinite
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
         type: 2}
@@ -2791,6 +2796,11 @@ Prefab:
         type: 2}
       propertyPath: active
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
+        type: 2}
+      propertyPath: quantity
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 59900d05381c8f34e81173230ce86470, type: 2}
