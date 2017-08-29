@@ -21,5 +21,9 @@ public static class OffsetCalculator {
 		}
 	}
 
+	public static Vector3 GetMousePos(){
+		return Camera.main.ScreenToWorldPoint(Input.mousePosition); 
+	}
+
 }
 

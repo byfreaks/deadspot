@@ -34,13 +34,15 @@ public class MainScriptPlayer : MonoBehaviour {
 
 	[Header("Logic")]
 	public LayerMask shootingLayer;
+	public float shotLength = 10;
+	public Material bulletMaterial;
 
 	//Private
 	//>State
 	private bool isPlayerDead = false;
 	//>Movement
 	private bool facingRight = true;
-	private bool isAiming = false;
+	public bool isAiming = false; [HideInInspector]
 	private int jumpTimes;
 	private float spd = 0;
 	//>Shooting
@@ -51,6 +53,10 @@ public class MainScriptPlayer : MonoBehaviour {
 	private string toDisplay;
 	public float lengthOffsetX = 0.5f, lengthOffsetY = 0.6f;
 	public float heightOffsetY;
+
+	//Testing
+	public Image innerHealthBar;
+	private int inmune = 0;
 
 	enum st {
 		none = 0,
@@ -67,13 +73,29 @@ public class MainScriptPlayer : MonoBehaviour {
 		hp = GetComponent<HealthComponent>();
 		legsAnimator = playerLegs.GetComponent<Animator>();
 		torsoAnimator= playerTorso.GetComponent<Animator>();
-		
-
 		//
 		rb.freezeRotation = true;
 	}
 	
 	void Update () {
+
+		//TESTING NOTE:
+		var theBarRectTransform = innerHealthBar.transform as RectTransform;
+		//var newWidth = Remap(theBarRectTransform.sizeDelta.x,0,100,0,hp.HealthCurrent );
+		float newWidth = map(100,180,hp.HealthCurrent);
+		if (newWidth >= 0 && newWidth <= 180)
+		theBarRectTransform.sizeDelta = new Vector2(newWidth, theBarRectTransform.sizeDelta.y);
+
+		inmune--;
+
+		if (inmune > 0){
+			playerTorso.GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f, 0.5f);
+			playerLegs.GetComponent<SpriteRenderer>().color =  new Color(1f,1f,1f, 0.5f);
+		} else {
+			playerTorso.GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f, 1f);
+			playerLegs.GetComponent<SpriteRenderer>().color =  new Color(1f,1f,1f, 1f);
+		}
+
 		switch (state){
 			case (int)st.normal:                                               ///NORMAL STATE NOTE:
 
@@ -135,10 +157,11 @@ public class MainScriptPlayer : MonoBehaviour {
 			playerLegs.GetComponent<SpriteRenderer>().flipX = !facingRight;
 
 			//Debug FPS
-			toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
-			GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
+			//toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
+			//GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 
-			if (inputer.keyPressQ) GetKiled();
+			//if (inputer.keyPressQ) GetKiled(); TODO: 
+			if (inputer.keyPressQ) Damaged();  
 				break;
 
 
@@ -172,18 +195,23 @@ public class MainScriptPlayer : MonoBehaviour {
 		hit = Physics2D.Raycast( pos, rayDirection, rayDistance, shootingLayer);
 
 		//Cosmetic
-
-		//DrawLine(gunOffset.transform.position,rayDirection+pos,Color.white, 0.1f);
-		// FIXME: when hit.point is null, the ray line gets drawn to the origin of the scene,
-		// where it should extend to the shot direction a defined distance. 
-		DrawLine(offsetPosition,hit.point,Color.white, 0.1f);
+		//TODO: Clamp shotLength to the distance between offsetPosition and hit.point
+		Vector3 lineOffset = OffsetCalculator.GetOffsetPosition(mousePos.y > pos.y, pos, ang, shotLength, shotLength);
+		DrawLine(offsetPosition, lineOffset ,Color.white, 0.1f);
 
 		// TODO: effect
 		if (hit.collider != null){
+			
+			//Debug Actual hit
+			Debug.DrawRay(offsetPosition,hit.point - (Vector2)offsetPosition,Color.red,0);
 
 			Rigidbody2D hitRb = hit.collider.GetComponent<Rigidbody2D>();
+			if (hitRb.bodyType != RigidbodyType2D.Static){
+				hitRb.velocity = new Vector2(30,0); //temporal kickback targert	
+				hit.collider.GetComponent<HealthComponent>().Damage(50); //placeholder damager
+			}
 
-			if (hitRb.bodyType != RigidbodyType2D.Static) hitRb.velocity = new Vector2(30,0); //temporal kickback targert	
+			
 
 			
 		}
@@ -219,14 +247,25 @@ public class MainScriptPlayer : MonoBehaviour {
 		myLine.transform.position = start;
 		myLine.AddComponent<LineRenderer>();
 		LineRenderer lr = myLine.GetComponent<LineRenderer>();
-		lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-		lr.SetColors(color, color);
-		lr.SetWidth(0.1f, 1.2f);
+		//lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		lr.material = bulletMaterial;
+		//lr.SetColors(color, color);
+		lr.startColor = color;
+		lr.endColor = color;
+		//lr.SetWidth(0.1f, 1.2f);
+		lr.startWidth = 0.1f;
+		lr.endWidth = 1.2f;
 		lr.SetPosition(0, start);
 		lr.SetPosition(1, end);
 		GameObject.Destroy(myLine, duration);
 	}
 	
+	void Damaged(){
+		if(inmune <= 0){
+			rb.velocity = new Vector2(rb.velocity.x, jumpForce*2);
+			inmune = 120;
+		}
+	}
 
 	void GetKiled(){
 		isPlayerDead = true;
@@ -243,5 +282,14 @@ public class MainScriptPlayer : MonoBehaviour {
 
 	void OnDrawGizmos(){
 		Gizmos.DrawSphere(offsetPosition, 2);
+	}
+
+	//TODO: Erase, or at leat figure out
+	float Remap (float value, float from1, float to1, float from2, float to2) {
+    	return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+	}
+
+	float map(float from, float to, float val){
+		return (to*val)/from;
 	}
 }

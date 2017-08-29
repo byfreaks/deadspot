@@ -12,7 +12,7 @@ public class SpawnerComponent : MonoBehaviour {
 
 	//General Vars
 	[Header("General Options")]
-	public bool enabled;
+	public bool active;
 	public GameObject toSpawn;
 	public GameObject dynamicObjectsParent;
 	public int mode = (int)md.interval;
@@ -42,7 +42,7 @@ public class SpawnerComponent : MonoBehaviour {
 		switch (mode){
 			case 0:
 				
-				if (time >= timeInterval && enabled){
+				if (time >= timeInterval && active){
 					time = 0;
 
 					if (isInfinite){
