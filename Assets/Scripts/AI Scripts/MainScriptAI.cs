@@ -14,17 +14,22 @@ public class MainScriptAI : MonoBehaviour {
 	public GameObject objective;
 	public LayerMask objectiveLayer;
 
+	//Second objective to attack
+	public GameObject objSecond;
+	public LayerMask objSecondLayer;
+
 	//Attributes
 	[Header("Physics settings")]
 	public float movespeed;
 	public float attackDistance;
-	private int attackTime = 100; 
+	private int attackTime = 50; 
 	
 	//States
-	private bool followingObj = false;
+	private bool followingObj = false; 
 	private bool isAttacking = false;
 	private bool facingRight = true;
 	private bool inAttack = false;
+	private bool wait = false;
 
 	//Components
 	private Rigidbody2D rb;
@@ -44,7 +49,7 @@ public class MainScriptAI : MonoBehaviour {
 		rb.freezeRotation = true;
 
 		movespeed = Random.Range(80f,130f);
-		attackDistance = Random.Range(17f,21f);
+		attackDistance = Random.Range(17f,27f);
 		contAttack = 0;
 	}
 	
@@ -54,37 +59,43 @@ public class MainScriptAI : MonoBehaviour {
 		//STATE: dead
 		if(hthCom.HealthCurrent == 0){
 			
-			//FALTA Animacion de Morir
-			Destroy(this.gameObject);
+			kill();
 
 		//STATE: in Attack
 		}else if(inAttack){
+			//Moment of attack (Frame after of collision)
 			if(contAttack == 1){
-				
+				//Check if hit the objective
 				if(attackCollider.GetComponent<AttackObjective>().collision){
-					Debug.Log("Ataco Aqui");
 					objective.GetComponent<MainScriptPlayer>().Damaged(20);
+				
+				}else if(this.objSecond!=null){ //Check if hit the second objective
+					if(attackCollider.GetComponent<AttackObjective>().collisionSObj){
+						//Daño
+					}
 				}
 				contAttack++;
-
+			
+			//End attack animation 
 			}else if(contAttack>=attackTime){
 				
-				Debug.Log("Termino el ataque");
 				contAttack=0;
 				Destroy(attackCollider);
 				inAttack = false;
 			
+			//Doing attack animation
 			}else{
 				contAttack++;
-				Debug.Log(contAttack);
 			}
 
+			//Set attack hit box to the left/right
 			if (facingRight && attackCollider != null){
 				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(attackPosition,0);
-			} else {
+			} else if (!facingRight && attackCollider != null) {
 				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(-attackPosition,0);
 			}
 
+		//OTHER STATES
 		}else{
 
 			//Set State
@@ -97,15 +108,40 @@ public class MainScriptAI : MonoBehaviour {
 			//STATE: following objective
 			}else{
 
+				short pos = detectPositionObj();
 				//Detect position objective
-				this.facingRight = detectPositionObj();
-				sprRr.flipX = !this.facingRight;
+				if(pos == -1){
+					
+					//Left
+					wait = false;
+					facingRight = false;
+					sprRr.flipX = !this.facingRight;
+
+				}else if(pos == 1){
+					
+					//Right
+					wait = false;
+					facingRight = true;
+					sprRr.flipX = !this.facingRight;
+
+				}else if(pos == 0){
+					
+					//Top/down
+					wait = true;
+				}
+
+				
 
 				//Move to objective
-				if(!this.isAttacking) moveTo(this.facingRight);
+				if(!this.isAttacking && !wait) moveTo(this.facingRight);
+
+				//Set second objective
+				setSecondObjective();
 
 				//Detect collision with the objective
-				this.isAttacking = detectCollision(this.objective);
+				this.isAttacking = detectCollision(this.objective, this.objectiveLayer);
+				//Detec collision with the second objective
+				if(this.objSecond!=null)this.isAttacking = detectCollision(this.objSecond, this.objSecondLayer);
 
 				//Attack
 				if(this.isAttacking){
@@ -115,7 +151,6 @@ public class MainScriptAI : MonoBehaviour {
 					attackCollider.transform.parent = this.transform;
 
 					//Empieza Animacion de atacar
-					Debug.Log("Empieza el ataque");
 					
 				}
 				
@@ -124,20 +159,22 @@ public class MainScriptAI : MonoBehaviour {
 		
 	}
 
-	bool detectPositionObj(){
-		if(objective.transform.position.x < this.transform.position.x){
+	short detectPositionObj(){
+		if(objective.transform.position.x  < this.transform.position.x - attackDistance){
 			//Left
-			return false;
-		}else{
+			return -1;
+		}else if(objective.transform.position.x > this.transform.position.x  + attackDistance){
 			//Right
-			return true;
+			return 1;
+		}else{
+			return 0;
 		}
 	}
 
-	bool detectCollision(GameObject a){
-		if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, attackDistance, objectiveLayer).collider==a.GetComponent<BoxCollider2D>()){
+	bool detectCollision(GameObject a, LayerMask b){
+		if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, attackDistance, b).collider==a.GetComponent<BoxCollider2D>()){
 			return true; //Collision right
-		}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, objectiveLayer).collider==a.GetComponent<BoxCollider2D>()){
+		}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, b).collider==a.GetComponent<BoxCollider2D>()){
 			return true; //Collision left
 		}
 		return false; //NO collision
@@ -149,7 +186,17 @@ public class MainScriptAI : MonoBehaviour {
 		
 	}
 
-
+	void kill(){
+		//FALTA Animacion muerte
+		Destroy(this.gameObject);
+	}
 	
+	void setSecondObjective(){
+		if(this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.right, attackDistance, objSecondLayer).collider!=null){
+			objSecond = Physics2D.Raycast(this.transform.position, Vector2.right, attackDistance, objSecondLayer).collider.gameObject;//Collision right
+		}else if(!this.facingRight && Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, objSecondLayer).collider!=null){
+			objSecond = Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, objSecondLayer).collider.gameObject;//Collision left
+		}
 
+	}
 }
