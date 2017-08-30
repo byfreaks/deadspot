@@ -36,6 +36,8 @@ public class MainScriptPlayer : MonoBehaviour {
 	public LayerMask shootingLayer;
 	public float shotLength = 10;
 	public Material bulletMaterial;
+	public GameObject emptyBuild;
+	private GameObject toCreate;
 
 	//Private
 	//>State
@@ -44,7 +46,7 @@ public class MainScriptPlayer : MonoBehaviour {
 	private bool facingRight = true;
 	public bool isAiming = false; [HideInInspector]
 	private int jumpTimes;
-	private float spd = 0;
+	private float spd;
 	//>Shooting
 	private float shootingRayMax = 50f;
 	private Vector3 offsetPosition;
@@ -53,6 +55,7 @@ public class MainScriptPlayer : MonoBehaviour {
 	private string toDisplay;
 	public float lengthOffsetX = 0.5f, lengthOffsetY = 0.6f;
 	public float heightOffsetY;
+	public bool isBuilding = false;
 
 	//Testing
 	public Image innerHealthBar;
@@ -61,6 +64,7 @@ public class MainScriptPlayer : MonoBehaviour {
 	enum st {
 		none = 0,
 		normal,
+		build,
 		dead
 	}
 	private int state = (int)st.normal;
@@ -160,15 +164,74 @@ public class MainScriptPlayer : MonoBehaviour {
 			//toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
 			//GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 
-			//if (inputer.keyPressQ) GetKiled(); TODO: 
-			if (inputer.keyPressQ) Damaged(1);  
+			if (inputer.keyPressQ){
+				state = (int)st.build;
+				isBuilding = true;
+			}
 				break;
 
 
 
 			case (int)st.none:                                                      // NONE STATE NOTE:
-			state = (int)st.normal; 
+				state = (int)st.normal; 
 				break;
+
+			case (int)st.build:                                                     // BUILD STATE NOTE:
+
+				Vector2 mousePos = OffsetCalculator.GetMousePos();
+
+				//Building
+				if (GameObject.Find("ToBuildGhost(Clone)") == null){
+					toCreate = Instantiate(emptyBuild, mousePos, Quaternion.identity );
+				}
+
+				if (inputer.mouseLButtonPress) toCreate.GetComponent<DefenseGhost>().Create();
+
+
+
+				//Movement & Jumping
+				if (jumpTimes <= 0){
+					if (inputer.keyHoldD){
+						rb.velocity = new Vector2( moveSpeed, rb.velocity.y);
+						facingRight = true;	
+						
+					} else if (inputer.keyHoldA){
+						rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
+						facingRight = false;
+
+					}
+					
+					if (inputer.keyPressSpace){
+						rb.velocity = new Vector2(rb.velocity.x, jumpForce );
+						//jumpTimes++;
+					}
+				}
+
+				//Animation
+				if (Mathf.Abs(rb.velocity.x) != 0) legsAnimator.SetBool("aWalking", true);
+				else legsAnimator.SetBool("aWalking", false);
+
+				//temporal
+				playerTorso.GetComponent<SpriteRenderer>().sprite = sprNormalKira;
+
+				//Reset the Torso sprite to have no rotation
+				if (!isPlayerDead) RotateTorsoReset();
+				legsAnimator.speed = 1f;
+
+				//Face correct direction
+				playerTorso.GetComponent<SpriteRenderer>().flipX = !facingRight;
+				playerLegs.GetComponent<SpriteRenderer>().flipX = !facingRight;
+
+				if (inputer.keyPressQ){
+					isBuilding = false;
+					DestroyImmediate(toCreate);
+				}
+
+				if (!isBuilding){ //exit state
+					state = (int)st.normal;
+				}
+
+				break; 
 		}
 
 		
@@ -271,9 +334,6 @@ public class MainScriptPlayer : MonoBehaviour {
 				hp.HealthCurrent -= val;
 			}
 		}
-
-		
-		
 		
 	}
 
