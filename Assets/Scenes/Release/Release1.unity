@@ -2616,6 +2616,11 @@ Prefab:
       propertyPath: attackDistance
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 114362019870817582, guid: 29e5b0179245e984986d3af2dcbfe217,
+        type: 2}
+      propertyPath: objSecondLayer.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 29e5b0179245e984986d3af2dcbfe217, type: 2}
   m_IsPrefabParent: 0
