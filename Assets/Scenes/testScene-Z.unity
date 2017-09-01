@@ -374,22 +374,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 216137266}
---- !u!1 &223675691 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1832486077376662, guid: 7ed7d61b23c41d04ba2ec63d1ad98756,
-    type: 2}
-  m_PrefabInternal: {fileID: 1935898127}
---- !u!114 &223675697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 223675691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d178062f0fa81c348ad5fc34b100d09e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &242630531
 Prefab:
   m_ObjectHideFlags: 0
@@ -902,6 +886,16 @@ Prefab:
         type: 2}
       propertyPath: active
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
+        type: 2}
+      propertyPath: quantity
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 114534290263343794, guid: 59900d05381c8f34e81173230ce86470,
+        type: 2}
+      propertyPath: isInfinite
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 59900d05381c8f34e81173230ce86470, type: 2}

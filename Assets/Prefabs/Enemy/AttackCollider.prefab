@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4862102681250474}
   - component: {fileID: 61610480614673364}
   - component: {fileID: 114800273224721304}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: AttackCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78,3 +78,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collision: 0
+  collisionSObj: 0
