@@ -71,7 +71,7 @@ public class MainScriptAI : MonoBehaviour {
 				
 				}else if(this.objSecond!=null){ //Check if hit the second objective
 					if(attackCollider.GetComponent<AttackObjective>().collisionSObj){
-						//Daño
+						objSecond.GetComponent<HealthComponent>().Damage(25);
 					}
 				}
 				contAttack++;
@@ -94,6 +94,7 @@ public class MainScriptAI : MonoBehaviour {
 			} else if (!facingRight && attackCollider != null) {
 				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(-attackPosition,0);
 			}
+			
 
 		//OTHER STATES
 		}else{
@@ -149,6 +150,7 @@ public class MainScriptAI : MonoBehaviour {
 					
 					attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
 					attackCollider.transform.parent = this.transform;
+					attackCollider.layer = 0;
 
 					//Empieza Animacion de atacar
 					

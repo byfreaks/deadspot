@@ -24,7 +24,7 @@ public class SpawnerComponent : MonoBehaviour {
 	public bool isInfinite = false;
 	public int quantity;
 
-	int timeSinceCreate = 0;
+	//int timeSinceCreate = 0;
 	int timeSpeed = 1;
 	int time;
 

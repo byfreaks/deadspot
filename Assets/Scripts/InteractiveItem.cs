@@ -6,15 +6,12 @@ public class InteractiveItem : MonoBehaviour {
 
 	private bool canBeUsed;
 	private bool open = false;
-	private string tagName = "something";
 
 	public InputController input;
 
 	void Start(){
 		input = new InputController();
-	
-		tagName = "woodbench";
-
+		canBeUsed = true;
 	}
 	
 	void OnTriggerStay2D(){
@@ -25,7 +22,7 @@ public class InteractiveItem : MonoBehaviour {
 
 	
 
-	void Updte(){
+	void Update(){
 		if (open){
 			
 		}
