@@ -22,8 +22,10 @@ public class AttackObjective : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other){
 		if(other == objToAttack.GetComponent<Collider2D>()){
 			collision = true;
-		}else if(other == secObj.GetComponent<Collider2D>()){
-			collisionSObj = true;
+		}else if(secObj!=null){
+			if(other == secObj.GetComponent<Collider2D>()){
+				collisionSObj = true;
+			}
 		}else{
 			collisionSObj = false;
 			collision = false;

@@ -22,11 +22,14 @@ public class MainScriptAI : MonoBehaviour {
 	[Header("Physics settings")]
 	public float movespeed;
 	public float attackDistance;
+	public float damageOne;
+	public float damageTwo;
 	private int attackTime = 50; 
 	
 	//States
 	private bool followingObj = false; 
-	private bool isAttacking = false;
+	private bool isAttackingOne = false;
+	private bool isAttackingTwo = false;
 	private bool facingRight = true;
 	private bool inAttack = false;
 	private bool wait = false;
@@ -51,6 +54,8 @@ public class MainScriptAI : MonoBehaviour {
 		movespeed = Random.Range(80f,130f);
 		attackDistance = Random.Range(17f,27f);
 		contAttack = 0;
+		damageOne = 25;
+		damageTwo = 20;
 	}
 	
 	// Update is called once per frame
@@ -65,13 +70,15 @@ public class MainScriptAI : MonoBehaviour {
 		}else if(inAttack){
 			//Moment of attack (Frame after of collision)
 			if(contAttack == 1){
-				//Check if hit the objective
-				if(attackCollider.GetComponent<AttackObjective>().collision){
-					objective.GetComponent<MainScriptPlayer>().Damaged(20);
-				
-				}else if(this.objSecond!=null){ //Check if hit the second objective
+				if(this.isAttackingOne){
+					//Check if hit the objective
+					if(attackCollider.GetComponent<AttackObjective>().collision){
+						objective.GetComponent<MainScriptPlayer>().Damaged(damageOne);					
+					}
+				}else if(this.isAttackingTwo){
+					//Check if hit the second objective
 					if(attackCollider.GetComponent<AttackObjective>().collisionSObj){
-						objSecond.GetComponent<HealthComponent>().Damage(25);
+						objSecond.GetComponent<DefenseBehaviour>().Damage(damageTwo);
 					}
 				}
 				contAttack++;
@@ -109,6 +116,11 @@ public class MainScriptAI : MonoBehaviour {
 			//STATE: following objective
 			}else{
 
+				
+				//RESTART
+				this.isAttackingOne = false;
+				this.isAttackingTwo = false;
+
 				short pos = detectPositionObj();
 				//Detect position objective
 				if(pos == -1){
@@ -134,24 +146,24 @@ public class MainScriptAI : MonoBehaviour {
 				
 
 				//Move to objective
-				if(!this.isAttacking && !wait) moveTo(this.facingRight);
+				if(!this.isAttackingOne && !this.isAttackingTwo && !wait){
+					moveTo(this.facingRight);
+				}
 
 				//Set second objective
 				setSecondObjective();
 
 				//Detect collision with the objective
-				this.isAttacking = detectCollision(this.objective, this.objectiveLayer);
+				this.isAttackingOne = detectCollision(this.objective, this.objectiveLayer);
 				//Detec collision with the second objective
-				if(this.objSecond!=null)this.isAttacking = detectCollision(this.objSecond, this.objSecondLayer);
+				if(this.objSecond!=null)this.isAttackingTwo = detectCollision(this.objSecond, this.objSecondLayer);
 
 				//Attack
-				if(this.isAttacking){
+				if(this.isAttackingOne || this.isAttackingTwo){
 					inAttack = true;
 					
 					attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
 					attackCollider.transform.parent = this.transform;
-					attackCollider.layer = 0;
-
 					//Empieza Animacion de atacar
 					
 				}

@@ -139,8 +139,14 @@ MonoBehaviour:
   objectiveLayer:
     serializedVersion: 2
     m_Bits: 1
+  objSecond: {fileID: 0}
+  objSecondLayer:
+    serializedVersion: 2
+    m_Bits: 0
   movespeed: 200
   attackDistance: 0
+  damageOne: 0
+  damageTwo: 0
 --- !u!212 &212352908164879068
 SpriteRenderer:
   m_ObjectHideFlags: 1

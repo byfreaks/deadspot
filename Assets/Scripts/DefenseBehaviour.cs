@@ -10,7 +10,7 @@ public class DefenseBehaviour : MonoBehaviour {
 		hp = this.gameObject.GetComponent<HealthComponent>();
 	}
 	
-	void Damage(float d){
+	public void Damage(float d){
 		if (hp.HealthCurrent <= 0){
 			Break();
 		} else {
