@@ -18,6 +18,12 @@ public class MainScriptAI : MonoBehaviour {
 	public GameObject objSecond;
 	public LayerMask objSecondLayer;
 
+	//Pathfinding
+	private GameObject objZone;
+	public GameObject refPathController;
+	private PathFinding pathFinding;
+	public int currentZone;
+
 	//Attributes
 	[Header("Physics settings")]
 	public float movespeed;
@@ -48,14 +54,15 @@ public class MainScriptAI : MonoBehaviour {
 		anm = GetComponent<Animator>();
 		sprRr = GetComponent<SpriteRenderer>();
 		hthCom = GetComponent<HealthComponent>();
+		pathFinding = refPathController.GetComponent<PathFinding>();
 
 		rb.freezeRotation = true;
 
-		movespeed = Random.Range(80f,130f);
-		attackDistance = Random.Range(17f,27f);
-		contAttack = 0;
-		damageOne = 25;
-		damageTwo = 20;
+		this.movespeed = Random.Range(80f,130f);
+		this.attackDistance = Random.Range(17f,27f);
+		this.contAttack = 0;
+		this.damageOne = 25;
+		this.damageTwo = 20;
 	}
 	
 	// Update is called once per frame
@@ -64,12 +71,12 @@ public class MainScriptAI : MonoBehaviour {
 		//STATE: dead
 		if(hthCom.HealthCurrent == 0){
 			
-			kill();
+			this.kill();
 
 		//STATE: in Attack
-		}else if(inAttack){
+		}else if(this.inAttack){
 			//Moment of attack (Frame after of collision)
-			if(contAttack == 1){
+			if(this.contAttack == 1){
 				if(this.isAttackingOne){
 					//Check if hit the objective
 					if(attackCollider.GetComponent<AttackObjective>().collision){
@@ -81,24 +88,24 @@ public class MainScriptAI : MonoBehaviour {
 						objSecond.GetComponent<DefenseBehaviour>().Damage(damageTwo);
 					}
 				}
-				contAttack++;
+				this.contAttack++;
 			
 			//End attack animation 
-			}else if(contAttack>=attackTime){
+			}else if(this.contAttack>=this.attackTime){
 				
-				contAttack=0;
+				this.contAttack=0;
 				Destroy(attackCollider);
-				inAttack = false;
+				this.inAttack = false;
 			
 			//Doing attack animation
 			}else{
-				contAttack++;
+				this.contAttack++;
 			}
 
 			//Set attack hit box to the left/right
-			if (facingRight && attackCollider != null){
+			if (this.facingRight && attackCollider != null){
 				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(attackPosition,0);
-			} else if (!facingRight && attackCollider != null) {
+			} else if (!this.facingRight && attackCollider != null) {
 				attackCollider.GetComponent<BoxCollider2D>().offset = new Vector2(-attackPosition,0);
 			}
 			
@@ -107,60 +114,89 @@ public class MainScriptAI : MonoBehaviour {
 		}else{
 
 			//Set State
-			followingObj = (objective!=null);
+			this.followingObj = (objective!=null);
 
 			//STATE: idle
-			if(!followingObj){
+			if(!this.followingObj){
 				//Do something
 
 			//STATE: following objective
 			}else{
 
-				
+				//Check player zone
+				if(pathFinding.playerZone!=this.currentZone){
+					objZone = pathFinding.findConnection(this.currentZone);
+					
+					short pos = detectPositionObj(objZone);
+					//Detect position objective
+					if(pos == -1){
+						
+						//Left
+						this.wait = false;
+						this.facingRight = false;
+						sprRr.flipX = !this.facingRight;
+
+					}else if(pos == 1){
+						
+						//Right
+						this.wait = false;
+						this.facingRight = true;
+						sprRr.flipX = !this.facingRight;
+
+					}else if(pos == 0){
+						
+						//Top/down
+						this.wait = true;
+					}
+
+					if(!this.wait) moveTo(this.facingRight);
+					
+				}else{
+
 				//RESTART
 				this.isAttackingOne = false;
 				this.isAttackingTwo = false;
 
-				short pos = detectPositionObj();
+				short pos = detectPositionObj(objective);
 				//Detect position objective
 				if(pos == -1){
 					
 					//Left
-					wait = false;
-					facingRight = false;
+					this.wait = false;
+					this.facingRight = false;
 					sprRr.flipX = !this.facingRight;
 
 				}else if(pos == 1){
 					
 					//Right
-					wait = false;
-					facingRight = true;
+					this.wait = false;
+					this.facingRight = true;
 					sprRr.flipX = !this.facingRight;
 
 				}else if(pos == 0){
 					
 					//Top/down
-					wait = true;
+					this.wait = true;
 				}
 
 				
 
 				//Move to objective
 				if(!this.isAttackingOne && !this.isAttackingTwo && !wait){
-					moveTo(this.facingRight);
+					this.moveTo(this.facingRight);
 				}
 
 				//Set second objective
-				setSecondObjective();
+				this.setSecondObjective();
 
 				//Detect collision with the objective
-				this.isAttackingOne = detectCollision(this.objective, this.objectiveLayer);
+				this.isAttackingOne = this.detectCollision(this.objective, this.objectiveLayer);
 				//Detec collision with the second objective
-				if(this.objSecond!=null)this.isAttackingTwo = detectCollision(this.objSecond, this.objSecondLayer);
+				if(this.objSecond!=null)this.isAttackingTwo = this.detectCollision(this.objSecond, this.objSecondLayer);
 
 				//Attack
 				if(this.isAttackingOne || this.isAttackingTwo){
-					inAttack = true;
+					this.inAttack = true;
 					
 					attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
 					attackCollider.transform.parent = this.transform;
@@ -168,16 +204,20 @@ public class MainScriptAI : MonoBehaviour {
 					
 				}
 				
+				}
+
+				
+				
 			}
 		}
 		
 	}
 
-	short detectPositionObj(){
-		if(objective.transform.position.x  < this.transform.position.x - attackDistance){
+	short detectPositionObj(GameObject obj){
+		if(obj.transform.position.x  < this.transform.position.x - attackDistance){
 			//Left
 			return -1;
-		}else if(objective.transform.position.x > this.transform.position.x  + attackDistance){
+		}else if(obj.transform.position.x > this.transform.position.x  + attackDistance){
 			//Right
 			return 1;
 		}else{
