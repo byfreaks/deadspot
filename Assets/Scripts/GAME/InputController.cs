@@ -19,6 +19,7 @@ public class InputController : MonoBehaviour {
 	//mouse
 	public bool mouseRButton, mouseLButton;
 	public bool mouseRButtonPress, mouseLButtonPress;
+	public bool mouseRButtonRel, mouseLButtonRel;
 	
 	void Update () {
 
@@ -36,6 +37,9 @@ public class InputController : MonoBehaviour {
 
 				mouseRButtonPress = Input.GetMouseButtonDown(1) ? true : false;
 				mouseLButtonPress = Input.GetMouseButtonDown(0) ? true : false;
+
+				mouseRButtonRel = Input.GetMouseButtonUp(1) ? true : false;
+				mouseLButtonRel = Input.GetMouseButtonUp(0) ? true : false;
 
 			break;
 

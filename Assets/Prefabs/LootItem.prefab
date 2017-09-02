@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4713253315029202}
   - component: {fileID: 50380273361861322}
   - component: {fileID: 61970596412439920}
+  - component: {fileID: 114390417567728380}
   m_Layer: 10
   m_Name: LootItem
   m_TagString: Untagged
@@ -37,7 +38,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4750783213509214}
   - component: {fileID: 212366733682857906}
-  - component: {fileID: 114020355734006412}
   - component: {fileID: 61013604237749126}
   m_Layer: 0
   m_Name: LootSprite
@@ -143,17 +143,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 61.5271, y: 60.55832}
   m_EdgeRadius: 0
---- !u!114 &114020355734006412
+--- !u!114 &114390417567728380
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775533413622264}
+  m_GameObject: {fileID: 1418160731763330}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e7050b7dececf344aca78b30c88687a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  value: 0
+  spr: {fileID: 1775533413622264}
 --- !u!212 &212366733682857906
 SpriteRenderer:
   m_ObjectHideFlags: 1

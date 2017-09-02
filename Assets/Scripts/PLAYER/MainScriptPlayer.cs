@@ -15,7 +15,7 @@ public class MainScriptPlayer : MonoBehaviour {
 	private HealthComponent hp;
 	private Animator legsAnimator;
 	//private Animator torsoAnimator; [not used yet]
-	private WeaponComponent weaponComponent;
+	private WeaponComponent wpn;
 
 	//Body parts
 	[Header("Body parts")]
@@ -39,6 +39,9 @@ public class MainScriptPlayer : MonoBehaviour {
 	public Material bulletMaterial;
 	public GameObject emptyBuild;
 	private GameObject toCreate;
+	public bool justShot = false; [HideInInspector]
+
+	public int equipped = 2;
 
 	//Private
 	//>State
@@ -62,6 +65,8 @@ public class MainScriptPlayer : MonoBehaviour {
 	public Image innerHealthBar;
 	private int inmune = 0;
 
+	public int valueCollected = 0;
+
 	enum st {
 		none = 0,
 		normal,
@@ -78,9 +83,11 @@ public class MainScriptPlayer : MonoBehaviour {
 		hp = GetComponent<HealthComponent>();
 		legsAnimator = playerLegs.GetComponent<Animator>();
 		//torsoAnimator= playerTorso.GetComponent<Animator>(); [not used yet]
-		weaponComponent = GetComponent<WeaponComponent>();
+		wpn = GetComponent<WeaponComponent>();
 		//
 		rb.freezeRotation = true;
+
+		
 	}
 	
 	void Update () {
@@ -103,7 +110,7 @@ public class MainScriptPlayer : MonoBehaviour {
 		}
 
 		switch (state){
-			case (int)st.normal:                                                    ///NORMAL STATE NOTE:
+			case (int)st.normal: 
 
 				//Aim
 				if (inputer.mouseRButton){
@@ -143,7 +150,8 @@ public class MainScriptPlayer : MonoBehaviour {
 
 					Vector3 aimDirection;
 					RotateTorso(out aimDirection);
-					if (inputer.mouseLButtonPress) Shoot(aimDirection); //Gun is single fire.
+					if (inputer.mouseLButton) wpn.Shoot(aimDirection); //Gun is single fire.
+					else if (inputer.mouseLButtonRel) justShot = false;
 
 					legsAnimator.speed = 0.5f;
 					
@@ -163,8 +171,8 @@ public class MainScriptPlayer : MonoBehaviour {
 				playerLegs.GetComponent<SpriteRenderer>().flipX = !facingRight;
 
 				//Debug FPS
-				//toDisplay = ("fps " + Mathf.Floor(1.0f / Time.deltaTime) );
-				//GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
+				toDisplay = ("Value Collected: " + valueCollected );
+				GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
 
 				if (inputer.keyPressQ){
 					state = (int)st.build;
@@ -174,11 +182,11 @@ public class MainScriptPlayer : MonoBehaviour {
 
 
 
-			case (int)st.none:                                                      ///NONE STATE NOTE:
+			case (int)st.none: 
 				state = (int)st.normal; 
 				break;
 
-			case (int)st.build:                                                     ///BUILD STATE NOTE:
+			case (int)st.build: 
 
 				Vector2 mousePos = OffsetCalculator.GetMousePos();
 
@@ -240,57 +248,6 @@ public class MainScriptPlayer : MonoBehaviour {
 		
 	}
 
-	void Shoot(Vector3 dir, float defaultMargin = 0, float maxDistance = 500f){
-
-		switch (weaponComponent.weapon){
-			case 0:
-				
-				break;
-			case 1:
-
-				//Mouse and playerTorso position variables.
-				Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); 
-				Vector3 pos = playerTorso.transform.position + new Vector3(0,heightOffsetY,playerTorso.transform.position.z);
-				
-				//Ray Propierties
-				RaycastHit2D hit;
-				float rayMargin = Random.Range(-defaultMargin,defaultMargin);
-				Vector3 rayDirection = (new Vector3(0, rayMargin, 0) + dir);
-				float rayDistance = maxDistance;
-
-				//Calculate Offset
-				float ang = Vector2.Angle(Vector2.right,dir); 
-				offsetPosition = OffsetCalculator.GetOffsetPosition(mousePos.y > pos.y, pos, ang, lengthOffsetX, lengthOffsetY);
-
-				//Shoot
-				hit = Physics2D.Raycast( pos, rayDirection, rayDistance, shootingLayer);
-
-				//Cosmetic
-				//TODO: Clamp shotLength to the distance between offsetPosition and hit.point
-				Vector3 lineOffset = OffsetCalculator.GetOffsetPosition(mousePos.y > pos.y, pos, ang, shotLength, shotLength);
-				DrawLine(offsetPosition, lineOffset ,Color.white, 0.1f);
-
-				// TODO: effect
-				if (hit.collider != null){
-					
-					//Debug Actual hit
-					Debug.DrawRay(offsetPosition,hit.point - (Vector2)offsetPosition,Color.red,0);
-
-					Rigidbody2D hitRb = hit.collider.GetComponent<Rigidbody2D>();
-					if (hitRb.bodyType != RigidbodyType2D.Static){
-						hitRb.velocity = new Vector2(30,0); //temporal kickback targert	
-						hit.collider.GetComponent<HealthComponent>().Damage(50); //placeholder damager
-					}
-					
-				}
-				break;
-
-		}
-		
-		
-		
-	}
-
 	void RotateTorso(out Vector3 aimDirection){
 		//Get mouse and torso position vector3
 		Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); 
@@ -313,32 +270,17 @@ public class MainScriptPlayer : MonoBehaviour {
 	void RotateTorsoReset(){
 		playerTorso.transform.localEulerAngles = new Vector3(0, 0, 0);
 	}
-
-	void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.1f){
-		GameObject myLine = new GameObject();
-		myLine.transform.position = start;
-		myLine.AddComponent<LineRenderer>();
-		LineRenderer lr = myLine.GetComponent<LineRenderer>();
-		//lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-		lr.material = bulletMaterial;
-		lr.startColor = color;
-		lr.endColor = color;
-		lr.startWidth = 0.1f;
-		lr.endWidth = 1.2f;
-		lr.SetPosition(0, start);
-		lr.SetPosition(1, end);
-		GameObject.Destroy(myLine, duration);
-	}
 	
 	public void Damaged(float val){
 		if(inmune <= 0){
 			rb.velocity = new Vector2(rb.velocity.x, jumpForce*2);
 			inmune = 120;
 		
+			if (hp.HealthCurrent > 0){
+				hp.HealthCurrent -= val;
+			}
 			if (hp.HealthCurrent <= 0){
 				GetKiled();
-			} else {
-				hp.HealthCurrent -= val;
 			}
 		}
 		
@@ -355,15 +297,6 @@ public class MainScriptPlayer : MonoBehaviour {
 
 		playerTorso.GetComponent<Rigidbody2D>().velocity = new Vector2( Random.Range(-400,400), Random.Range(200,400) );
 		playerLegs.GetComponent<Rigidbody2D>().velocity = new Vector2( Random.Range(-400,400), Random.Range(200,400) );
-	}
-
-	void OnDrawGizmos(){
-		Gizmos.DrawSphere(offsetPosition, 2);
-	}
-
-	//TODO: Erase, or at leat figure out
-	float Remap (float value, float from1, float to1, float from2, float to2) {
-    	return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
 	}
 
 	float map(float from, float to, float val){
