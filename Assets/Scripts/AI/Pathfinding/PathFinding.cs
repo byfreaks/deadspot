@@ -24,10 +24,17 @@ public class PathFinding : MonoBehaviour {
 
 		foreach (var item in zoneConnectionObj)
 		{
-			if(item.GetComponent<ValuesZCObj>().zoneOne == currentZone ){
-				if(item.GetComponent<ValuesZCObj>().zoneTwo == playerZone){
+			if(item.GetComponent<ValuesZCObj>().zoneOne == currentZone || item.GetComponent<ValuesZCObj>().zoneTwo == currentZone ){
+				if(item.GetComponent<ValuesZCObj>().zoneTwo == playerZone || item.GetComponent<ValuesZCObj>().zoneOne == playerZone){
 					return item;
 				}
+			}
+		}
+
+		foreach (var item in zoneConnectionObj)
+		{
+			if(item.GetComponent<ValuesZCObj>().zoneOne == currentZone || item.GetComponent<ValuesZCObj>().zoneTwo == currentZone ){
+				return item;
 			}
 		}
 		

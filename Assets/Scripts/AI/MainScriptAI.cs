@@ -27,18 +27,24 @@ public class MainScriptAI : MonoBehaviour {
 	//Attributes
 	[Header("Physics settings")]
 	public float movespeed;
+	public float climbspeed;
 	public float attackDistance;
 	public float damageOne;
 	public float damageTwo;
 	private int attackTime = 50; 
+	private int contClimb = 70;
 	
 	//States
-	private bool followingObj = false; 
+	[Header("STATES")]
+	public bool followingObj = false; 
 	private bool isAttackingOne = false;
 	private bool isAttackingTwo = false;
 	private bool facingRight = true;
-	private bool inAttack = false;
-	private bool wait = false;
+	public bool inAttack = false;
+	public bool wait = false;
+	public bool climbUp = false;
+	public bool climbDown = false;
+	public bool climbing = false;
 
 	//Components
 	private Rigidbody2D rb;
@@ -59,6 +65,7 @@ public class MainScriptAI : MonoBehaviour {
 		rb.freezeRotation = true;
 
 		this.movespeed = Random.Range(80f,130f);
+		this.climbspeed = 80;
 		this.attackDistance = Random.Range(17f,27f);
 		this.contAttack = 0;
 		this.damageOne = 25;
@@ -110,6 +117,22 @@ public class MainScriptAI : MonoBehaviour {
 			}
 			
 
+		//Climbing
+		}else if(this.climbing){
+			if(this.contClimb>0){
+				if(this.climbUp){
+					crossZone(1);
+				}else if(this.climbDown){
+					crossZone(-1);
+				}
+				this.contClimb--;
+			}else{
+				this.climbing = false;
+				this.climbUp = false;
+				this.climbDown = false;
+				this.contClimb = 60;
+			}
+
 		//OTHER STATES
 		}else{
 
@@ -127,7 +150,49 @@ public class MainScriptAI : MonoBehaviour {
 				if(pathFinding.playerZone!=this.currentZone){
 					objZone = pathFinding.findConnection(this.currentZone);
 					
-					short pos = detectPositionObj(objZone);
+					short pos = detectPositionObj(objZone, 10);
+					//Detect position objective
+					if(pos == -1){
+
+						//Left
+						this.wait = false;
+						this.facingRight = false;
+						sprRr.flipX = !this.facingRight;
+
+					}else if(pos == 1){
+						
+						//Right
+						this.wait = false;
+						this.facingRight = true;
+						sprRr.flipX = !this.facingRight;
+
+					}else if(pos == 0){
+						
+						//Top/down
+						this.wait = true;
+					}
+					
+					//Walking to connection
+					if(!this.wait) moveTo(this.facingRight);
+					//Cross to another zone
+					else{
+						climbing = true;
+						//UP
+						if(pathFinding.playerZone>this.currentZone){
+							climbUp = true;
+						//Down
+						}else if(pathFinding.playerZone<this.currentZone){
+							climbDown = true;
+						}
+					} 
+
+				}else{
+
+					//RESTART
+					this.isAttackingOne = false;
+					this.isAttackingTwo = false;
+
+					short pos = detectPositionObj(objective, this.attackDistance);
 					//Detect position objective
 					if(pos == -1){
 						
@@ -149,60 +214,30 @@ public class MainScriptAI : MonoBehaviour {
 						this.wait = true;
 					}
 
-					if(!this.wait) moveTo(this.facingRight);
 					
-				}else{
 
-				//RESTART
-				this.isAttackingOne = false;
-				this.isAttackingTwo = false;
+					//Move to objective
+					if(!this.isAttackingOne && !this.isAttackingTwo && !wait){
+						this.moveTo(this.facingRight);
+					}
 
-				short pos = detectPositionObj(objective);
-				//Detect position objective
-				if(pos == -1){
-					
-					//Left
-					this.wait = false;
-					this.facingRight = false;
-					sprRr.flipX = !this.facingRight;
+					//Set second objective
+					this.setSecondObjective();
 
-				}else if(pos == 1){
-					
-					//Right
-					this.wait = false;
-					this.facingRight = true;
-					sprRr.flipX = !this.facingRight;
+					//Detect collision with the objective
+					this.isAttackingOne = this.detectCollision(this.objective, this.objectiveLayer);
+					//Detec collision with the second objective
+					if(this.objSecond!=null)this.isAttackingTwo = this.detectCollision(this.objSecond, this.objSecondLayer);
 
-				}else if(pos == 0){
-					
-					//Top/down
-					this.wait = true;
-				}
-
-				
-
-				//Move to objective
-				if(!this.isAttackingOne && !this.isAttackingTwo && !wait){
-					this.moveTo(this.facingRight);
-				}
-
-				//Set second objective
-				this.setSecondObjective();
-
-				//Detect collision with the objective
-				this.isAttackingOne = this.detectCollision(this.objective, this.objectiveLayer);
-				//Detec collision with the second objective
-				if(this.objSecond!=null)this.isAttackingTwo = this.detectCollision(this.objSecond, this.objSecondLayer);
-
-				//Attack
-				if(this.isAttackingOne || this.isAttackingTwo){
-					this.inAttack = true;
-					
-					attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
-					attackCollider.transform.parent = this.transform;
-					//Empieza Animacion de atacar
-					
-				}
+					//Attack
+					if(this.isAttackingOne || this.isAttackingTwo){
+						this.inAttack = true;
+						
+						attackCollider = Instantiate(refAttackCollider, this.transform.position, Quaternion.identity);
+						attackCollider.transform.parent = this.transform;
+						//Empieza Animacion de atacar
+						
+					}
 				
 				}
 
@@ -213,14 +248,21 @@ public class MainScriptAI : MonoBehaviour {
 		
 	}
 
-	short detectPositionObj(GameObject obj){
-		if(obj.transform.position.x  < this.transform.position.x - attackDistance){
-			//Left
-			return -1;
-		}else if(obj.transform.position.x > this.transform.position.x  + attackDistance){
-			//Right
-			return 1;
+	short detectPositionObj(GameObject obj, float a){
+		if(obj != null){
+			if(obj.transform.position.x  < this.transform.position.x - a){
+				//Left
+				return -1;
+			}else if(obj.transform.position.x > this.transform.position.x  + a){
+				//Right
+				return 1;
+			}else{
+				return 0;
+			}
 		}else{
+			if(this.facingRight){
+				return 1;
+			}
 			return 0;
 		}
 	}
@@ -252,5 +294,17 @@ public class MainScriptAI : MonoBehaviour {
 			objSecond = Physics2D.Raycast(this.transform.position, Vector2.left, attackDistance, objSecondLayer).collider.gameObject;//Collision left
 		}
 
+	}
+
+	void crossZone(short a){
+		//UP
+		if(a == 1){
+			//Start Animation UP
+			rb.velocity = new Vector2(0, climbspeed);
+		//Down
+		}else if(a==-1){
+			//Start Animation Down
+			rb.velocity = new Vector2(0, -climbspeed);
+		}
 	}
 }

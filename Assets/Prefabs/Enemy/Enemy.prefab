@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 114039492980070178}
   m_Layer: 9
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1986568294010902}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -330.32007, y: -47.559128, z: 9}
+  m_LocalPosition: {x: -74.91524, y: 328.66925, z: 19}
   m_LocalScale: {x: 0.976741, y: 0.96511155, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -142,8 +142,11 @@ MonoBehaviour:
   objSecond: {fileID: 0}
   objSecondLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
+  refPathController: {fileID: 0}
+  currentZone: 0
   movespeed: 200
+  claimspeed: 0
   attackDistance: 0
   damageOne: 0
   damageTwo: 0
