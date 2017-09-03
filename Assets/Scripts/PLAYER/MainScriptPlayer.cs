@@ -41,7 +41,12 @@ public class MainScriptPlayer : MonoBehaviour {
 	private GameObject toCreate;
 	public bool justShot = false; [HideInInspector]
 
+	
+
+	[Header("Testing")]
 	public int equipped = 2;
+	public float heightOffsetY;
+	public GameObject txt;
 
 	//Private
 	//>State
@@ -54,11 +59,10 @@ public class MainScriptPlayer : MonoBehaviour {
 	//>Shooting
 	//private float shootingRayMax = 50f;
 	private Vector3 offsetPosition;
-
 	//Other
 	private string toDisplay;
 	public float lengthOffsetX = 0.5f, lengthOffsetY = 0.6f;
-	public float heightOffsetY;
+	
 	public bool isBuilding = false;
 
 	//Testing
@@ -86,6 +90,8 @@ public class MainScriptPlayer : MonoBehaviour {
 		wpn = GetComponent<WeaponComponent>();
 		//
 		rb.freezeRotation = true;
+
+		//wpn.SwapWeaponDev(1);
 
 		
 	}
@@ -172,12 +178,16 @@ public class MainScriptPlayer : MonoBehaviour {
 
 				//Debug FPS
 				toDisplay = ("Value Collected: " + valueCollected );
-				GameObject.Find("Text").GetComponent<Text>().text = toDisplay;	
+				txt.GetComponent<Text>().text = toDisplay;	
 
 				if (inputer.keyPressQ){
 					state = (int)st.build;
 					isBuilding = true;
 				}
+				if (inputer.keyPressR && wpn.currentWeaponItem.Weapon.ID != 1){
+					wpn.currentWeaponItem.Reload();
+				}
+
 				break;
 
 

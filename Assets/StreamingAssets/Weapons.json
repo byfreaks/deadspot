@@ -4,27 +4,31 @@
       "name": "none",
       "type": 0,
       "x_offset": "0",
-      "y_offset": "0"  
+      "y_offset": "0",
+      "magsize":  -1
     },
     {
       "id": 1,
       "name": "Hands",
       "type": 1,
       "x_offset": "0",
-      "y_offset": "0"
+      "y_offset": "0",
+      "magsize":  -1
     },
     {
       "id": 2,
       "name": "Pistol",
       "type": 2,
-      "x_offset": "0.5f",
-      "y_offset": "0.6f"
+      "x_offset": "0.5",
+      "y_offset": "0.6",
+      "magsize":  7
     },
     {
       "id": 3,
       "name": "MachineGun",
       "type": 3,
-      "x_offset": "0.6f",
-      "y_offset": "0.6f"
+      "x_offset": "0.6",
+      "y_offset": "0.6",
+      "magsize":  35
     }
    ]

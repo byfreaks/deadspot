@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WeaponComponent : MonoBehaviour {
 
@@ -10,8 +11,12 @@ public class WeaponComponent : MonoBehaviour {
 	public GameObject DBS;
 	public WeaponDatabase wpn;
 	public int currentWeaponID;
-
 	private Weapon currentWeapon;
+
+	public WeaponItem currentWeaponItem;
+
+	public WeaponItem[] WeaponInventory = new WeaponItem[5];
+
 
 	enum weapon{
 		hands = 1,
@@ -22,12 +27,50 @@ public class WeaponComponent : MonoBehaviour {
 	void Start(){
 		wpn = DBS.GetComponent<WeaponDatabase>();
 		Kira = GetComponent<MainScriptPlayer>();
-		currentWeaponID = (int)weapon.pistol;
+		currentWeaponID = (int)weapon.hands;
+
+		WeaponInventory[0] = AddWeapon(1); //hands
+		
+		WeaponInventory[1] = AddWeapon(2); //pistol
+		WeaponInventory[1].Ammo = 12;
+		WeaponInventory[1].Chamber = 0;
+
+		WeaponInventory[2] = AddWeapon(3); //mgun
+		WeaponInventory[2].Ammo = 3000;
+		WeaponInventory[2].Chamber = 0;
+
+		SwapWeaponDev(1);
+	}
+
+	void Update(){
+		string toDisplayChamber = currentWeaponItem.Chamber+"/"+currentWeaponItem.Weapon.Magsize+"  |  "+currentWeaponItem.Ammo;
+		GameObject.Find("ChamberUI").GetComponent<Text>().text = toDisplayChamber;
+	}
+
+	public WeaponItem AddWeapon(int id){
+		return new WeaponItem(wpn.GetWeapon(id));
+	}
+
+	public void SwapWeaponDev(int w){
+		currentWeaponID = w;
+		Debug.Log("Switched to: " + wpn.GetWeapon(w).Name );
+		switch(w){
+			case 1:
+				currentWeaponItem = WeaponInventory[0];
+				break;
+			case 2:
+				currentWeaponItem = WeaponInventory[1];
+				break;
+			case 3:
+				currentWeaponItem = WeaponInventory[2];
+				break;
+		}
 	}
 
 	public void Shoot(Vector3 dir, float defaultMargin = 0, float maxDistance = 500f){
 
-		currentWeapon = wpn.GetWeapon(currentWeaponID); //Get Current Weapon
+		//currentWeapon = wpn.GetWeapon(currentWeaponID); //Get currentWeaponItem Weapon
+		currentWeapon = currentWeaponItem.Weapon;
 
 		//Mouse and playerTorso position variables.
 		Vector3 mousePos = OffsetCalculator.GetMousePos();
@@ -44,6 +87,11 @@ public class WeaponComponent : MonoBehaviour {
 
 				if (Kira.justShot == true)
 					break;
+
+				if (currentWeaponItem.Chamber <= 0)
+					break;
+				else 
+					currentWeaponItem.Chamber--;
 
 				//Ray Propierties
 				rayMargin = Random.Range(-defaultMargin,defaultMargin);
@@ -83,6 +131,11 @@ public class WeaponComponent : MonoBehaviour {
 				break;
 
 			case 3: //autoWeapons
+
+				if (currentWeaponItem.Chamber <= 0)
+					break;
+				else 
+					currentWeaponItem.Chamber--;
 
 				//Ray Propierties
 				rayMargin = Random.Range(-defaultMargin,defaultMargin);
@@ -146,3 +199,62 @@ public class WeaponComponent : MonoBehaviour {
 
 }
 
+public class WeaponItem {
+
+	private Weapon weapon;
+	private int ammo;
+	private int chamber;
+
+	public Weapon Weapon {get; set;} 
+	public int Ammo {
+		get{ return ammo; } 
+		set{
+			if (value >= 0) ammo = value;
+			else Debug.Log("Z> Trying to store a negative ammo number!");
+		}
+	}
+	public int Chamber {
+		get{ return chamber;  } 
+		set{ chamber = value; }
+	}
+
+
+	public WeaponItem(){}
+
+	public WeaponItem(Weapon w){
+		this.Weapon = w;
+	}
+
+	public void SingleFire(){
+		if (Chamber > 0) Chamber--;
+	}
+
+	public void Reload(){
+		if (Ammo > 0 && Chamber < Weapon.Magsize){
+			// if (Ammo > Weapon.Magsize){
+			// 	Chamber += Weapon.Magsize;
+			// 	Ammo -= Chamber;
+			// 	Debug.Log("caso 1");
+			// } else {
+			// 	Chamber += Ammo-Chamber;
+			// 	Ammo -= Weapon.Magsize;
+			// 	Debug.Log("caso 2");
+			// }
+
+			int missingBullets = Weapon.Magsize - Chamber;
+			
+			if (Ammo >= missingBullets){
+				Chamber += missingBullets;
+				Ammo -= missingBullets;
+				return;
+			} else {
+				if (Ammo + Chamber <= Weapon.Magsize){
+					Chamber += Ammo;
+					Ammo = 0;
+				}
+			}
+
+		}
+	}
+	
+}
