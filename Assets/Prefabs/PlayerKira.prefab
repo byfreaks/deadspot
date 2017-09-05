@@ -190,9 +190,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1747198752180274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 04f18f69d5a6b834fbbd34256aaf9f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletMaterial: {fileID: 2100000, guid: 239ae612fccbb8e408f7e9bb907f00ce, type: 2}
+  DBS: {fileID: 0}
+  wpn: {fileID: 0}
+  currentWeaponID: 0
 --- !u!114 &114955894950052058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -219,12 +223,16 @@ MonoBehaviour:
   shotLength: 10
   bulletMaterial: {fileID: 2100000, guid: 239ae612fccbb8e408f7e9bb907f00ce, type: 2}
   emptyBuild: {fileID: 1542826709012460, guid: b08245561c401514581c4d9c049f6841, type: 2}
+  justShot: 0
+  equipped: 2
+  heightOffsetY: 4
+  txt: {fileID: 0}
   isAiming: 0
   lengthOffsetX: 0.5
   lengthOffsetY: 0.6
-  heightOffsetY: 4
   isBuilding: 0
   innerHealthBar: {fileID: 0}
+  valueCollected: 0
 --- !u!212 &212857669221810252
 SpriteRenderer:
   m_ObjectHideFlags: 1

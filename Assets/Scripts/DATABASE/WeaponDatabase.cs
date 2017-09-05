@@ -10,6 +10,15 @@ public class WeaponDatabase : MonoBehaviour {
 	private List<Weapon> database = new List<Weapon>();
 	private JsonData weaponData;
 
+	public List<Weapon> Database{ 
+		get{
+			return database;
+		}
+		set{
+			database = value;
+		}
+	}
+
 	void Start () {
 		weaponData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/Weapons.json"));
 		ConstructWeaponDatabase();
@@ -31,16 +40,9 @@ public class WeaponDatabase : MonoBehaviour {
 		Debug.Log("Weapon Database constructed");
 	}
 
-	public string ReturnName(int id){
-		return database[id].Name;
-	}
-
-	public int GetType(int id){
-		return database[id].WeaponType;
-	}
-
 	public Weapon GetWeapon(int id){
-		return database[id];
+		return Database.Find(x => x.ID == id);
+		//return database[id];
 	}
 	
 }

@@ -9,13 +9,14 @@ public class WeaponComponent : MonoBehaviour {
 	public Material bulletMaterial;
 	private Vector3 offsetPosition;
 	public GameObject DBS;
-	public WeaponDatabase wpn;
+	[HideInInspector] public WeaponDatabase wpn; 
 	public int currentWeaponID;
 	private Weapon currentWeapon;
 
 	public WeaponItem currentWeaponItem;
 
-	public WeaponItem[] WeaponInventory = new WeaponItem[5];
+	//public WeaponItem[] WeaponInventory = new WeaponItem[5];
+	public List<WeaponItem> WeaponInventory = new List<WeaponItem>();
 
 
 	enum weapon{
@@ -29,22 +30,30 @@ public class WeaponComponent : MonoBehaviour {
 		Kira = GetComponent<MainScriptPlayer>();
 		currentWeaponID = (int)weapon.hands;
 
-		WeaponInventory[0] = AddWeapon(1); //hands
-		
-		WeaponInventory[1] = AddWeapon(2); //pistol
-		WeaponInventory[1].Ammo = 12;
-		WeaponInventory[1].Chamber = 0;
+		//WeaponInventory[0] = AddWeapon(1); //hands
 
-		WeaponInventory[2] = AddWeapon(3); //mgun
-		WeaponInventory[2].Ammo = 3000;
-		WeaponInventory[2].Chamber = 0;
+		WeaponInventory.Add( AddWeapon(1) );
+
+		// WeaponInventory.Add( AddWeapon(2) );
+		// WeaponInventory[1].Ammo = 150;
+		// WeaponInventory[1].Chamber = 0;
+
+		// WeaponInventory.Add( AddWeapon(3) );
+		// WeaponInventory[2].Ammo = 400;
+		// WeaponInventory[2].Chamber = 0;
 
 		SwapWeaponDev(1);
 	}
 
 	void Update(){
-		string toDisplayChamber = currentWeaponItem.Chamber+"/"+currentWeaponItem.Weapon.Magsize+"  |  "+currentWeaponItem.Ammo;
-		GameObject.Find("ChamberUI").GetComponent<Text>().text = toDisplayChamber;
+		if (currentWeaponItem != null){
+			string toDisplayChamber;
+			if (currentWeaponItem.Weapon.Name != "Hands")
+				toDisplayChamber = currentWeaponItem.Chamber+"/"+currentWeaponItem.Weapon.Magsize+"  |  "+currentWeaponItem.Ammo;
+			else
+				toDisplayChamber = "Unarmed";
+			GameObject.Find("ChamberUI").GetComponent<Text>().text = toDisplayChamber;
+		}
 	}
 
 	public WeaponItem AddWeapon(int id){
@@ -53,7 +62,6 @@ public class WeaponComponent : MonoBehaviour {
 
 	public void SwapWeaponDev(int w){
 		currentWeaponID = w;
-		Debug.Log("Switched to: " + wpn.GetWeapon(w).Name );
 		switch(w){
 			case 1:
 				currentWeaponItem = WeaponInventory[0];
@@ -65,6 +73,7 @@ public class WeaponComponent : MonoBehaviour {
 				currentWeaponItem = WeaponInventory[2];
 				break;
 		}
+		Debug.Log("Switched to: " + currentWeaponItem.Weapon.Name + " Type is: "+currentWeaponItem.Weapon.WeaponType);
 	}
 
 	public void Shoot(Vector3 dir, float defaultMargin = 0, float maxDistance = 500f){
