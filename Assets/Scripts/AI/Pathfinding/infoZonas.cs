@@ -25,9 +25,18 @@ public class infoZonas : MonoBehaviour{
 		
 	}
 
+	void OnTriggerEnter2D(Collider2D other){
+		if(other == plyCol){
+			scriptPath.updateZone(this.numberZone);
+		}
+		if(other.gameObject.tag =="Enemy"){
+			other.gameObject.GetComponent<MainScriptAI>().currentZone = numberZone;
+		}
+	}
+
 	void OnTriggerStay2D(Collider2D other){
 		if(other == plyCol){
-			scriptPath.playerZone = numberZone;
+			scriptPath.playerZone = this.numberZone;
 		}
 		if(other.gameObject.tag =="Enemy"){
 			other.gameObject.GetComponent<MainScriptAI>().currentZone = numberZone;

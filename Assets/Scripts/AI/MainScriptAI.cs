@@ -32,7 +32,6 @@ public class MainScriptAI : MonoBehaviour {
 	public float damageOne;
 	public float damageTwo;
 	private int attackTime = 50; 
-	private int contClimb = 70;
 	
 	//States
 	[Header("STATES")]
@@ -65,7 +64,7 @@ public class MainScriptAI : MonoBehaviour {
 		rb.freezeRotation = true;
 
 		this.movespeed = Random.Range(80f,130f);
-		this.climbspeed = 80;
+		this.climbspeed = Random.Range(60f,80f);
 		this.attackDistance = Random.Range(17f,27f);
 		this.contAttack = 0;
 		this.damageOne = 25;
@@ -119,19 +118,23 @@ public class MainScriptAI : MonoBehaviour {
 
 		//Climbing
 		}else if(this.climbing){
-			if(this.contClimb>0){
 				if(this.climbUp){
-					crossZone(1);
+					if(this.objZone.GetComponent<ValuesZCObj>().positionTwo>this.transform.position.y){
+						crossZone(1);
+					}else{
+						this.climbing = false;
+						this.climbUp = false;
+						this.climbDown = false;
+					}
 				}else if(this.climbDown){
-					crossZone(-1);
+					if(this.objZone.GetComponent<ValuesZCObj>().positionOne<this.transform.position.y){
+						crossZone(-1);
+					}else{
+						this.climbing = false;
+						this.climbUp = false;
+						this.climbDown = false;
+					}
 				}
-				this.contClimb--;
-			}else{
-				this.climbing = false;
-				this.climbUp = false;
-				this.climbDown = false;
-				this.contClimb = 60;
-			}
 
 		//OTHER STATES
 		}else{
@@ -150,7 +153,7 @@ public class MainScriptAI : MonoBehaviour {
 				if(pathFinding.playerZone!=this.currentZone){
 					objZone = pathFinding.findConnection(this.currentZone);
 					
-					short pos = detectPositionObj(objZone, 10);
+					short pos = detectPositionObj(objZone, 1);
 					//Detect position objective
 					if(pos == -1){
 
@@ -178,10 +181,10 @@ public class MainScriptAI : MonoBehaviour {
 					else{
 						climbing = true;
 						//UP
-						if(pathFinding.playerZone>this.currentZone){
+						if(objZone.GetComponent<ValuesZCObj>().zoneOne>this.currentZone || objZone.GetComponent<ValuesZCObj>().zoneTwo>this.currentZone){
 							climbUp = true;
 						//Down
-						}else if(pathFinding.playerZone<this.currentZone){
+						}else if(objZone.GetComponent<ValuesZCObj>().zoneOne<this.currentZone || objZone.GetComponent<ValuesZCObj>().zoneTwo < this.currentZone){
 							climbDown = true;
 						}
 					} 
@@ -249,20 +252,13 @@ public class MainScriptAI : MonoBehaviour {
 	}
 
 	short detectPositionObj(GameObject obj, float a){
-		if(obj != null){
-			if(obj.transform.position.x  < this.transform.position.x - a){
-				//Left
-				return -1;
-			}else if(obj.transform.position.x > this.transform.position.x  + a){
-				//Right
-				return 1;
-			}else{
-				return 0;
-			}
+		if(obj.transform.position.x  < this.transform.position.x - a){
+			//Left
+			return -1;
+		}else if(obj.transform.position.x > this.transform.position.x  + a){
+			//Right
+			return 1;
 		}else{
-			if(this.facingRight){
-				return 1;
-			}
 			return 0;
 		}
 	}

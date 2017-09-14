@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1986568294010902}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -74.91524, y: 328.66925, z: 19}
+  m_LocalPosition: {x: -1160.9152, y: -96.73074, z: -1}
   m_LocalScale: {x: 0.976741, y: 0.96511155, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,7 +56,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 3
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -146,10 +146,16 @@ MonoBehaviour:
   refPathController: {fileID: 0}
   currentZone: 0
   movespeed: 200
-  claimspeed: 0
+  climbspeed: 0
   attackDistance: 0
   damageOne: 0
   damageTwo: 0
+  followingObj: 0
+  inAttack: 0
+  wait: 0
+  climbUp: 0
+  climbDown: 0
+  climbing: 0
 --- !u!212 &212352908164879068
 SpriteRenderer:
   m_ObjectHideFlags: 1
